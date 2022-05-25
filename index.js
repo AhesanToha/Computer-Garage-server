@@ -69,6 +69,31 @@ async function run() {
       const result = await orderCollection.insertOne(order);
       res.send({ success: true, result });
     });
+
+    app.get("/orders", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const orders = await orderCollection.find(query).toArray();
+      res.send(orders);
+    });
+
+    app.get("/user", async (req, res) => {
+      const users = await userCollection.find().toArray();
+      res.send(users);
+    });
+
+    app.put("/user/admin/:email", async (req, res) => {
+      const email = req.params.email;
+      const filter = { email: email };
+      const updateDoc = {
+        $set: { role: "admin" },
+      };
+      const result = await userCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
+
+ 
+
   } finally {
   }
 }
