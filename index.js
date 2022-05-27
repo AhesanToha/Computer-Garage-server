@@ -69,12 +69,21 @@ async function run() {
       const result = await orderCollection.insertOne(order);
       res.send({ success: true, result });
     });
+    app.post("/tools", async (req, res) => {
+      const newItem = req.body;
+      const result = await toolsCollection.insertOne(newItem);
+      res.send(result);
+    });
 
     app.get("/orders", async (req, res) => {
       const email = req.query.email;
       const query = { email: email };
       const orders = await orderCollection.find(query).toArray();
       res.send(orders);
+    });
+    app.get("/allOrders", async (req, res) => {
+      const allOrders = await orderCollection.find().toArray();
+      res.send(allOrders);
     });
 
     app.get("/user", async (req, res) => {
@@ -92,8 +101,12 @@ async function run() {
       res.send(result);
     });
 
- 
-
+    app.get("/admin/:email", async (req, res) => {
+      const email = req.params.email;
+      const user = await userCollection.findOne({ email: email });
+      const isAdmin = user.role === "admin";
+      res.send({ admin: isAdmin });
+    });
   } finally {
   }
 }
